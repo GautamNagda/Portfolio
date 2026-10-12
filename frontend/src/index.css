@@ -1,0 +1,402 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-color: #0a0a0f;
+  --accent-cyan: #4fd1ff;
+  --accent-blue: #3b82f6;
+  --card-bg: rgba(18, 18, 26, 0.7);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+html {
+  background-color: #0a0a0f;
+  color-scheme: dark;
+}
+
+body {
+  background-color: #0a0a0f;
+  color: #f5f6f8;
+  position: relative;
+}
+
+/* Custom background ambient glow layer replicating the Framer site atmosphere */
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(79, 209, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 100% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 0% 80%, rgba(79, 209, 255, 0.05) 0%, transparent 40%);
+}
+
+/* Framer border glow aura along edges */
+.viewport-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: inset 0 0 100px rgba(79, 209, 255, 0.04);
+}
+
+/* Glassmorphic card styling matching the Framer cards */
+.glass-card {
+  background: rgba(18, 18, 26, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(79, 209, 255, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(79, 209, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.glass-card-static {
+  background: rgba(18, 18, 26, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+}
+
+/* Eyebrow badge matching Framer mono pill */
+.mono-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4fd1ff;
+  background: rgba(79, 209, 255, 0.08);
+  border: 1px solid rgba(79, 209, 255, 0.25);
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 209, 255, 0.4);
+}
+
+/* ==========================================================================
+   ANIMATIONS & SCROLL REVEALS
+   ========================================================================== */
+
+/* Keyframes */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.04);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 24s linear infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* High-Performance Scroll Reveal Classes (IntersectionObserver) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-scale.is-revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 0.75s ease;
+  will-change: opacity;
+}
+
+.reveal-fade.is-revealed {
+  opacity: 1;
+}
+
+/* Stagger Delays */
+.delay-100 { transition-delay: 100ms; }
+.delay-150 { transition-delay: 150ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-250 { transition-delay: 250ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-350 { transition-delay: 350ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-600 { transition-delay: 600ms; }
+
+/* Hero Circular Photo Styling */
+.hero-photo-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.hero-photo-aura {
+  position: absolute;
+  inset: -12px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(79, 209, 255, 0.22) 0%, rgba(59, 130, 246, 0.12) 45%, transparent 72%);
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: 0;
+  animation: pulseGlow 5s ease-in-out infinite alternate;
+}
+
+.hero-photo-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 9999px;
+  border: 1px dashed rgba(79, 209, 255, 0.3);
+  pointer-events: none;
+  z-index: 1;
+  animation: spinSlow 32s linear infinite;
+}
+
+.hero-photo-frame {
+  position: relative;
+  z-index: 2;
+  border-radius: 9999px;
+  border: 2px solid rgba(79, 209, 255, 0.45);
+  box-shadow: 0 0 35px rgba(79, 209, 255, 0.2), inset 0 0 15px rgba(0, 0, 0, 0.6);
+  background: #0d0d16;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-photo-frame:hover {
+  border-color: #4fd1ff;
+  box-shadow: 0 0 50px rgba(79, 209, 255, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.5);
+  transform: scale(1.025);
+}
+
+/* Micro-interaction helpers */
+.hover-elevate {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-elevate:hover {
+  transform: translateY(-2px);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  .reveal-on-scroll {
+    transform: translateY(12px);
+    transition-duration: 0.5s;
+  }
+  .hero-photo-ring {
+    inset: -6px;
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transform: none !important;
+  }
+  .reveal-on-scroll,
+  .reveal-scale,
+  .reveal-fade {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   VESPER-INSPIRED HEROIC DESIGN ELEMENTS (Preserving Cyan Theme)
+   ========================================================================== */
+
+/* Liquid-metal style badge with cyan accent */
+.vesper-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(79, 209, 255, 0.15) 0%, rgba(20, 20, 32, 0.95) 50%, rgba(10, 10, 15, 0.98) 100%);
+  border: 1px solid rgba(79, 209, 255, 0.35);
+  box-shadow: 0 0 20px rgba(79, 209, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  color: #f2f2f2;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+}
+
+.vesper-badge-star {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4fd1ff;
+  animation: in-star 2s cubic-bezier(0.16, 1, 0.3, 1) infinite alternate;
+}
+
+@keyframes in-star {
+  0% { transform: scale(0.85) rotate(-15deg); }
+  100% { transform: scale(1.15) rotate(15deg); }
+}
+
+/* Liquid-glass Solid Button */
+.vesper-btn-solid {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: linear-gradient(180deg, #4fd1ff 0%, #38bdf8 50%, #0ea5e9 100%);
+  color: #050b14;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 24px rgba(79, 209, 255, 0.35);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.vesper-btn-solid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.45) 48%, transparent 76%);
+  transform: translateX(-130%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+}
+.vesper-btn-solid:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 42%, #0284c7 100%);
+  box-shadow: inset 0 1px 0 #ffffff, 0 0 32px rgba(79, 209, 255, 0.55), 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+.vesper-btn-solid:hover::after {
+  transform: translateX(130%);
+}
+
+/* Liquid-glass Ghost Button */
+.vesper-btn-ghost {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(14, 14, 23, 0.8) 50%, rgba(79, 209, 255, 0.06) 100%);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.vesper-btn-ghost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.3) 48%, transparent 76%);
+  transform: translateX(-130%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+}
+.vesper-btn-ghost:hover {
+  transform: translateY(-2px);
+  border-color: rgba(79, 209, 255, 0.5);
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 24px rgba(79, 209, 255, 0.25);
+}
+.vesper-btn-ghost:hover::after {
+  transform: translateX(130%);
+}
+
+/* Serif Italic Accent */
+.vesper-serif-accent {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+

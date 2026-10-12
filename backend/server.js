@@ -7,10 +7,45 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// CORS Origins Configuration
+const defaultAllowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:3000',
+];
+
+if (process.env.CLIENT_URL) {
+  // Support comma-separated URLs and strip trailing slashes
+  const envOrigins = process.env.CLIENT_URL
+    .split(',')
+    .map(url => url.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
+  defaultAllowedOrigins.push(...envOrigins);
+}
+
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://127.0.0.1:5173'],
-  methods: ['GET', 'POST'],
+  origin: function (origin, callback) {
+    // Allow non-browser requests (mobile apps, curl, Postman, server-to-server)
+    if (!origin) return callback(null, true);
+
+    const cleanOrigin = origin.replace(/\/+$/, '');
+
+    const isExplicitlyAllowed = defaultAllowedOrigins.some(
+      allowed => cleanOrigin.toLowerCase() === allowed.toLowerCase()
+    );
+
+    // Also automatically allow any *.vercel.app deployment
+    const isVercelDomain = /^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/i.test(cleanOrigin);
+
+    if (isExplicitlyAllowed || isVercelDomain) {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Origin blocked: ${origin}. Allowed origins:`, defaultAllowedOrigins);
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
 }));
 app.use(express.json());
